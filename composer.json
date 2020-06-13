@@ -1,0 +1,21 @@
+{
+    "name": "iamx/api-crud-generator",
+    "description": "Make an easy HATEOAS Api",
+    "require": {
+        "php" : "^5.5 || ^7.0",
+        "spatie/laravel-fractal": "^5.7"
+    },
+    "authors": [
+        {
+            "name": "Benito Huerta Jr",
+            "email": "huertajosebenito@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "iamx\\ApiCrudGenerator\\": "src/"
+        }
+    },
+    "license": "MIT"
+}

@@ -1,0 +1,60 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use App\Transformers\{{modelName}}Transformer;
+
+class {{modelName}} extends Model {
+
+	// Possible status
+	const STATUS_ACTIVE = 1;
+	const STATUS_INACTIVE = 0;
+
+	/**
+     * {{modelName}} Transformer
+     *
+     * @var class
+     */
+	public $transformer = {{modelName}}Transformer::class;
+
+	/**
+     * Table of Model
+     *
+     * @var string
+     */
+    protected $table = '{{modelNamePluralLowerCase}}';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+    	// Your attrinutes
+    	'status',
+    ];
+
+    // ATTRIBUTES
+
+    	# Place here your customs attributes
+
+    // SCOPES
+
+    	# Place here your scopes
+
+    // RELATIONS
+
+    	# Place here your relations
+
+    // FUNCTIONS
+
+    /**
+     *  Change the status to inactive or active
+     */
+    public function toggleStatus()
+    {
+    	$this->status = $this->status ? self::STATUS_INACTIVE : self::STATUS_ACTIVE;
+        $this->save();
+    }
+}

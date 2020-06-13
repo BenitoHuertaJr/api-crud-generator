@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Http\Controllers\Api\{{modelName}};
+
+use App\{{modelName}};
+use Illuminate\Http\{{modelName}}Request;
+use iamx\ApiCrudGenerator\Controllers\ApiController;
+
+class {{modelName}}Controller extends ApiController
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index() 
+    {
+        ${{modelNamePluralLowerCase}} = {{modelName}}::all();
+        return $this->showAll(${{modelNamePluralLowerCase}});
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store({{modelName}}Request $request) 
+    {
+        ${{modelNameSingularLowerCase}} = {{modelName}}::create($request->all());
+        return $this->showOne(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  {{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function show({{modelName}} ${{modelNameSingularLowerCase}}) 
+    {
+        return $this->showOne(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  {{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function update({{modelName}}Request $request, {{modelName}} ${{modelNameSingularLowerCase}}) 
+    {
+        ${{modelNameSingularLowerCase}}->update($request->all());
+        return $this->showOne(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  {{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy({{modelName}} ${{modelNameSingularLowerCase}}) 
+    {
+        ${{modelNameSingularLowerCase}}->toggleStatus();
+        return $this->showOne(${{modelNameSingularLowerCase}});
+    }
+}

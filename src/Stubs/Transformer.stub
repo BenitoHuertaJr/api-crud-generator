@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Transformers;
+
+use App\{{modelName}};
+use League\Fractal\TransformerAbstract;
+
+class {{modelName}}Transformer extends TransformerAbstract
+{
+    /**
+     * A Fractal transformer.
+     * @return array
+     */
+    public function transform({{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        return [
+            'id' => (int) ${{modelNameSingularLowerCase}}->id,
+            'created_at' => (string) ${{modelNameSingularLowerCase}}->created_at,
+            'updated_at' => (string) ${{modelNameSingularLowerCase}}->updated_at,
+            'links' => [
+//                [
+//                    'rel' => '',
+//                    'href' => ''
+//                ],
+//                [
+//                    'rel' => '',
+//                    'href' => ''
+//                ],
+            ]
+        ];
+    }
+
+    /**
+     * Has Attribute
+     * @param $attribute
+     * @return bool
+     */
+    public static function hasAttribute($attribute)
+    {
+        $attributes = [
+            'id',
+            'created_at',
+            'updated_at',
+        ];
+
+        return in_array($attribute, $attributes);
+    }
+}
