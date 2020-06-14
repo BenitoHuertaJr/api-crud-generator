@@ -5,7 +5,7 @@ namespace iamx\ApiCrudGenerator;
 use Illuminate\Support\ServiceProvider;
 use iamx\ApiCrudGenerator\Commands\CrudGeneratorCommand;
 
-class ApiCrudGeneratorProvider extends ServiceProvider
+class ApiCrudGeneratorServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,10 +14,7 @@ class ApiCrudGeneratorProvider extends ServiceProvider
      */
     public function register()
     {
-        /*
-         * Register the service provider for the dependency.
-         */
-        $this->app->register('ApiCrudGenerator\ApiCrudGeneratorProvider');
+        //
     }
 
     /**
