@@ -51,6 +51,7 @@ class {{modelName}} extends Model {
 
     /**
      *  Change the status to inactive or active
+     * @return void
      */
     public function toggleStatus()
     {
