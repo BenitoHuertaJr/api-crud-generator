@@ -155,10 +155,9 @@ trait CrudTrait {
     protected function addApiRoute($name)
     {
         $path  = base_path('routes/api.php');
-        $line  = PHP_EOL . 'Route::resource(\''; 
+        $line  = PHP_EOL . 'Route::apiResource(\''; 
         $line .= \Str::plural(strtolower($name)); 
         $line .= "', 'Api\\{$name}\\{$name}Controller'"; 
-        $line .= ", ['except' => ['create', 'edit']]";
         $line .= ");";
 
         \File::append($path, $line);
