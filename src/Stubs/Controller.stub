@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\{{modelName}};
 
 use App\{{modelName}};
-use Illuminate\Http\{{modelName}}Request;
+use App\Http\Requests\{{modelName}}Request;
 use iamx\ApiCrudGenerator\Controllers\ApiController;
 
 class {{modelName}}Controller extends ApiController
@@ -16,7 +16,7 @@ class {{modelName}}Controller extends ApiController
     public function index() 
     {
         ${{modelNamePluralLowerCase}} = {{modelName}}::all();
-        return $this->showAll(${{modelNamePluralLowerCase}});
+        return $this->all(${{modelNamePluralLowerCase}});
     }
 
     /**
@@ -28,7 +28,7 @@ class {{modelName}}Controller extends ApiController
     public function store({{modelName}}Request $request) 
     {
         ${{modelNameSingularLowerCase}} = {{modelName}}::create($request->all());
-        return $this->showOne(${{modelNameSingularLowerCase}});
+        return $this->one(${{modelNameSingularLowerCase}});
     }
 
     /**
@@ -39,7 +39,7 @@ class {{modelName}}Controller extends ApiController
      */
     public function show({{modelName}} ${{modelNameSingularLowerCase}}) 
     {
-        return $this->showOne(${{modelNameSingularLowerCase}});
+        return $this->one(${{modelNameSingularLowerCase}});
     }
 
     /**
@@ -52,7 +52,7 @@ class {{modelName}}Controller extends ApiController
     public function update({{modelName}}Request $request, {{modelName}} ${{modelNameSingularLowerCase}}) 
     {
         ${{modelNameSingularLowerCase}}->update($request->all());
-        return $this->showOne(${{modelNameSingularLowerCase}});
+        return $this->one(${{modelNameSingularLowerCase}});
     }
 
     /**
@@ -64,6 +64,6 @@ class {{modelName}}Controller extends ApiController
     public function destroy({{modelName}} ${{modelNameSingularLowerCase}}) 
     {
         ${{modelNameSingularLowerCase}}->toggleStatus();
-        return $this->showOne(${{modelNameSingularLowerCase}});
+        return $this->one(${{modelNameSingularLowerCase}});
     }
 }

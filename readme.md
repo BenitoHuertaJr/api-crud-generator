@@ -19,8 +19,8 @@ Now you can edit
 
 | Folder | File |
 | ------ | ------ |
-| app/Models | Test.php |
-| app/Transformers | UserTransformer.php |
+| app | Test.php |
+| app/Transformers | TestTransformer.php |
 | app/Http/Controller/Api/Test | TestController.php |
 | app/Http/Requests | TestRequest.php |
 | app/database/migrations | 2014_10_12_000000_create_tests_table.php |
@@ -32,6 +32,8 @@ $ php artisan migrate
 ```
 
 Then you can see the routes in routes/api.php file
+
+Start the server and go to 127.0.0.1:8000/api/tests
 
 License
 ----
