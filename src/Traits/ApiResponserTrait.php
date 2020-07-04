@@ -11,6 +11,67 @@ use Illuminate\Pagination\LengthAwarePaginator;
 trait ApiResponserTrait
 {
     /**
+     * @param Model $model
+     * @param Collection $collection
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function response($response, $code = 200)
+    {
+        if($response instanceof Collection)
+            return $this->collection($response, $code);
+
+        if($response instanceof Model)
+            return $this->model($response, $code);
+
+        return $response;
+    }
+
+    /**
+     * @param Collection $collection
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function collection(Collection $collection, int $code)
+    {
+        if ($collection->isEmpty())
+            return $this->success(['data' => $collection], $code);
+
+        $transformer = $collection->first()->transformer;
+
+        $collection = $this->filter($collection, $transformer);
+        $collection = $this->sort($collection);
+        $collection = $this->paginate($collection);
+        $collection = $this->transform($collection, $transformer);
+        $collection = $this->cache($collection);
+
+        return $this->success($collection, $code);
+    }
+
+    /**
+     * @param Model $model
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function model(Model $model, int $code)
+    {
+        $transformer = $model->transformer;
+        $model       = $this->transform($model, $transformer);
+
+        return $this->success($model, $code);
+    }
+
+    /**
+     * @param $message
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function message($message, $code = 200)
+    {
+        return $this->success(['data' => $message], $code);
+    }
+
+    /**
      * @param $data
      * @param $code
      * @return \Illuminate\Http\JsonResponse
@@ -31,58 +92,14 @@ trait ApiResponserTrait
     }
 
     /**
-     * @author Benito Huerta
-     * @param Collection $collection
-     * @param int $code
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function all(Collection $collection, $code = 200)
-    {
-        if ($collection->isEmpty())
-            return $this->success(['data' => $collection], $code);
-
-        $transformer = $collection->first()->transformer;
-
-        $collection = $this->filter($collection, $transformer);
-        $collection = $this->sort($collection);
-        $collection = $this->paginate($collection);
-        $collection = $this->transform($collection, $transformer);
-        $collection = $this->cache($collection);
-
-        return $this->success($collection, $code);
-    }
-
-    /**
-     * @param Model $instance
-     * @param int $code
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function one(Model $instance, $code = 200)
-    {
-        $transformer = $instance->transformer;
-        $instance    = $this->transform($instance, $transformer);
-
-        return $this->success($instance, $code);
-    }
-
-    /**
-     * @param $message
-     * @param int $code
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function message($message, $code = 200)
-    {
-        return $this->success(['data' => $message], $code);
-    }
-
-    /**
      * @param Collection $collection
      * @param $transformer
      * @return Collection|static
      */
     protected function filter(Collection $collection, $transformer)
     {
-        foreach (request()->query() as $query => $value) {
+        foreach (request()->query() as $query => $value) 
+        {
             if (isset($query, $value) and $transformer::hasAttribute($query))
                 $collection = $collection->where($query, $value);
         }

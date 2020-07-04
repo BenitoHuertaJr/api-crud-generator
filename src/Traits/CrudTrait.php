@@ -4,14 +4,61 @@ namespace iamx\ApiCrudGenerator\Traits;
 
 trait CrudTrait {
 
+    /**
+     * Make a api crud
+     * 
+     * @author Benito Huerta
+     * @created 2020/06/06
+     * @param $name string
+     */
     protected function makeCrud($name)
     {
-        $this->makeMigration($name);
-        $this->makeModel($name);
-        $this->makeRequest($name);
-        $this->makeTransformer($name);
-        $this->makeController($name);
-        $this->addApiRoute($name);
+        if(!$this->exists('Migration', $name))
+            $this->makeMigration($name);
+        else
+            $this->error(\Str::plural($name) . ' Migration already exists!');
+
+        if(!$this->exists('Model', $name))
+            $this->makeModel($name);
+        else
+            $this->error($name . ' Model already exists!');
+
+        if(!$this->exists('Request', $name))
+            $this->makeRequest($name);
+        else
+            $this->error($name . ' Request already exists!');
+
+        if(!$this->exists('Transformer', $name))
+            $this->makeTransformer($name);
+        else
+            $this->error($name . ' Transformer already exists!');
+
+        if(!$this->exists('Controller', $name))
+            $this->makeController($name);
+        else
+            $this->error($name . ' Controller already exists!');
+
+        $this->addApiRoutes($name);
+    }
+
+    /**
+     * Verify file exists
+     *
+     * @author Benito Huerta
+     * @created 2020/06/06
+     * @param $type string
+     * @param $name string
+     * @return bool
+     */
+    protected function exists($type, $name)
+    {
+        return [
+            'Migration'   => count(glob(base_path("database/migrations/*_create_" . \Str::plural(strtolower($name)) . "_table.php"))) > 0 ? true : false,
+            'Model'       => file_exists(app_path("/{$name}.php")),
+            'Request'     => file_exists(app_path("/Http/Requests/{$name}Request.php")),
+            'Transformer' => file_exists(app_path("/Transformers/{$name}Transformer.php")),
+            'Controller'  => file_exists(app_path("/Http/Controllers/Api/{$name}"))
+        ][$type];
     }
 
 	/**
@@ -23,19 +70,26 @@ trait CrudTrait {
 	 */
 	protected function makeModel($name)
     {
-        $modelTemplate = str_replace(
-            [
-                '{{modelName}}',
-                '{{modelNamePluralLowerCase}}',
-            ],
-            [
-                $name,
-                strtolower(\Str::plural($name)),
-            ],
-            $this->getStub('Model')
-        );
-        
-        file_put_contents(app_path("/{$name}.php"), $modelTemplate);
+        try {
+            
+            $modelTemplate = str_replace(
+                [
+                    '{{modelName}}',
+                    '{{modelNamePluralLowerCase}}',
+                ],
+                [
+                    $name,
+                    strtolower(\Str::plural($name)),
+                ],
+                $this->getStub('Model')
+            );
+            
+            file_put_contents(app_path("/{$name}.php"), $modelTemplate);
+            $this->info('New ' . $name . ' Model created!');
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
     }
 
     /**
@@ -47,20 +101,27 @@ trait CrudTrait {
      */
     protected function makeRequest($name)
     {
-        if(!file_exists(app_path("/Http/Requests")))
-            mkdir(app_path("/Http/Requests"), 0777, true);
+        try {
 
-        $modelTemplate = str_replace(
-            [
-                '{{modelName}}',
-            ],
-            [
-                $name,
-            ],
-            $this->getStub('Request')
-        );
-        
-        file_put_contents(app_path("/Http/Requests/{$name}Request.php"), $modelTemplate);
+            if(!file_exists(app_path("/Http/Requests")))
+                mkdir(app_path("/Http/Requests"), 0777, true);
+
+            $modelTemplate = str_replace(
+                [
+                    '{{modelName}}',
+                ],
+                [
+                    $name,
+                ],
+                $this->getStub('Request')
+            );
+            
+            file_put_contents(app_path("/Http/Requests/{$name}Request.php"), $modelTemplate);
+            $this->info('New ' . $name . ' Request created!');
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
     }
 
     /**
@@ -72,22 +133,31 @@ trait CrudTrait {
 	 */
     protected function makeTransformer($name) 
     {
-        if(!file_exists(app_path("/Transformers")))
-            mkdir(app_path("/Transformers"), 0777, true);
+        try {
 
-    	$modelTemplate = str_replace(
-            [
-                '{{modelName}}',
-                '{{modelNameSingularLowerCase}}',
-            ],
-            [
-                $name,
-                strtolower($name),
-            ],
-            $this->getStub('Transformer')
-        );
-        
-        file_put_contents(app_path("/Transformers/{$name}Transformer.php"), $modelTemplate);
+            if(!file_exists(app_path("/Transformers")))
+                mkdir(app_path("/Transformers"), 0777, true);
+
+            $modelTemplate = str_replace(
+                [
+                    '{{modelName}}',
+                    '{{modelNameSingularLowerCase}}',
+                    '{{modelNamePluralLowerCase}}',
+                ],
+                [
+                    $name,
+                    strtolower($name),
+                    strtolower(\Str::plural($name)),
+                ],
+                $this->getStub('Transformer')
+            );
+            
+            file_put_contents(app_path("/Transformers/{$name}Transformer.php"), $modelTemplate);
+            $this->info('New ' . $name . ' Transformer created!');
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }   
     }
 
     /**
@@ -99,24 +169,31 @@ trait CrudTrait {
 	 */
     protected function makeController($name)
     {
-        if(!file_exists(app_path("/Http/Controllers/Api/{$name}")))
-            mkdir(app_path("/Http/Controllers/Api/{$name}"), 0777, true);
+        try {
 
-        $controllerTemplate = str_replace(
-            [
-                '{{modelName}}',
-                '{{modelNamePluralLowerCase}}',
-                '{{modelNameSingularLowerCase}}'
-            ],
-            [
-                $name,
-                strtolower(\Str::plural($name)),
-                strtolower($name)
-            ],
-            $this->getStub('Controller')
-        );
+            if(!file_exists(app_path("/Http/Controllers/Api/{$name}")))
+                mkdir(app_path("/Http/Controllers/Api/{$name}"), 0777, true);
 
-        file_put_contents(app_path("/Http/Controllers/Api/{$name}/{$name}Controller.php"), $controllerTemplate);
+            $controllerTemplate = str_replace(
+                [
+                    '{{modelName}}',
+                    '{{modelNamePluralLowerCase}}',
+                    '{{modelNameSingularLowerCase}}'
+                ],
+                [
+                    $name,
+                    strtolower(\Str::plural($name)),
+                    strtolower($name)
+                ],
+                $this->getStub('Controller')
+            );
+
+            file_put_contents(app_path("/Http/Controllers/Api/{$name}/{$name}Controller.php"), $controllerTemplate);
+            $this->info('New ' . $name . ' Controller created!');
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        } 
     }
 
     /**
@@ -128,21 +205,28 @@ trait CrudTrait {
 	 */
     protected function makeMigration($name)
     {
-        $migrationTemplate = str_replace(
-            [
-                '{{modelName}}',
-                '{{modelNamePluralLowerCase}}',
-                '{{modelNamePlural}}'
-            ],
-            [
-                $name,
-                strtolower(\Str::plural($name)),
-                \Str::plural($name)
-            ],
-            $this->getStub('Migration')
-        );
+        try {
 
-        file_put_contents(base_path("database/migrations/" . date("Y_m_d_Gis") . "_create_" . \Str::plural(strtolower($name)) . "_table.php"), $migrationTemplate);
+            $migrationTemplate = str_replace(
+                [
+                    '{{modelName}}',
+                    '{{modelNamePluralLowerCase}}',
+                    '{{modelNamePlural}}'
+                ],
+                [
+                    $name,
+                    strtolower(\Str::plural($name)),
+                    \Str::plural($name)
+                ],
+                $this->getStub('Migration')
+            );
+
+            file_put_contents(base_path("database/migrations/" . date("Y_m_d_Gis") . "_create_" . \Str::plural(strtolower($name)) . "_table.php"), $migrationTemplate);
+            $this->info('New ' . \Str::plural($name) . ' Migration created!');
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        } 
     }
 
     /**
@@ -152,15 +236,44 @@ trait CrudTrait {
      * @created 2020/06/06
      * @param string $name
      */
-    protected function addApiRoute($name)
+    protected function addApiRoutes($name)
     {
-        $path  = base_path('routes/api.php');
-        $line  = PHP_EOL . 'Route::apiResource(\''; 
-        $line .= \Str::plural(strtolower($name)); 
-        $line .= "', 'Api\\{$name}\\{$name}Controller'"; 
-        $line .= ");";
+        try {
+            
+            $path  = base_path('routes/api.php');
+            $line  = PHP_EOL . 'Route::apiResource(\''; 
+            $line .= \Str::plural(strtolower($name)); 
+            $line .= "', 'Api\\{$name}\\{$name}Controller'"; 
+            $line .= ");";
 
-        \File::append($path, $line);
+            if(!$this->routeExists($path, $name)) {
+
+                \File::append($path, $line);
+                $this->info(\Str::plural($name) . ' api routes added!');
+
+            } else {
+                $this->error(\Str::plural($name) . ' api routes already exists!');
+            }
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * Verify if route exists
+     *
+     * @author Benito Huerta
+     * @created 2020/06/06
+     * @param string $path
+     * @param string $name
+     */
+    protected function routeExists($path, $route)
+    {
+        if(strpos(file_get_contents($path), $route)) 
+           return true;
+
+        return false;
     }
 
     /**
