@@ -14,18 +14,20 @@ class {{modelName}}Transformer extends TransformerAbstract
     public function transform({{modelName}} ${{modelNameSingularLowerCase}})
     {
         return [
-            'id' => (int) ${{modelNameSingularLowerCase}}->id,
+            'id'         => (int) ${{modelNameSingularLowerCase}}->id,
             'created_at' => (string) ${{modelNameSingularLowerCase}}->created_at,
             'updated_at' => (string) ${{modelNameSingularLowerCase}}->updated_at,
-            'links' => [
-//                [
-//                    'rel' => '',
-//                    'href' => ''
-//                ],
-//                [
-//                    'rel' => '',
-//                    'href' => ''
-//                ],
+            'links'      => [
+                [
+                    'rel'  => 'index',
+                    'href' => route('{{modelNamePluralLowerCase}}.index')
+                ],
+                [
+                    'rel'  => 'show',
+                    'href' => route('{{modelNamePluralLowerCase}}.show', [
+                                '{{modelNameSingularLowerCase}}' => ${{modelNameSingularLowerCase}}->id
+                            ])
+                ], 
             ]
         ];
     }

@@ -8,7 +8,7 @@ use App\Transformers\{{modelName}}Transformer;
 class {{modelName}} extends Model {
 
 	// Possible status
-	const STATUS_ACTIVE = 1;
+	const STATUS_ACTIVE   = 1;
 	const STATUS_INACTIVE = 0;
 
 	/**
@@ -31,21 +31,8 @@ class {{modelName}} extends Model {
      * @var array
      */
     protected $fillable = [
-    	// Your attrinutes
     	'status',
     ];
-
-    // ATTRIBUTES
-
-    	# Place here your customs attributes
-
-    // SCOPES
-
-    	# Place here your scopes
-
-    // RELATIONS
-
-    	# Place here your relations
 
     // FUNCTIONS
 
